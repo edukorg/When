@@ -18,10 +18,50 @@ public func when<T, U, V>(_ p1: Promise<T>, _ p2: Promise<U>, _ p3: Promise<V>) 
     }))
 }
 
+public func when<T, U, V, W>(_ p1: Promise<T>, _ p2: Promise<U>, _ p3: Promise<V>, _ p4: Promise<W>) -> Promise<(T, U, V, W)> {
+  let promises = [
+    p1.asVoid(on: instantQueue),
+    p2.asVoid(on: instantQueue),
+    p3.asVoid(on: instantQueue),
+    p4.asVoid(on: instantQueue)
+  ]
+
+  return when(promises)
+    .then(on: instantQueue, ({ _ in
+      (
+        p1.state.result!.value!,
+        p2.state.result!.value!,
+        p3.state.result!.value!,
+        p4.state.result!.value!
+      )
+    }))
+}
+
+public func when<T, U, V, W, X>(_ p1: Promise<T>, _ p2: Promise<U>, _ p3: Promise<V>, _ p4: Promise<W>, _ p5: Promise<X>) -> Promise<(T, U, V, W, X)> {
+  let promises = [
+    p1.asVoid(on: instantQueue),
+    p2.asVoid(on: instantQueue),
+    p3.asVoid(on: instantQueue),
+    p4.asVoid(on: instantQueue),
+    p5.asVoid(on: instantQueue)
+  ]
+
+  return when(promises)
+    .then(on: instantQueue, ({ _ in
+      (
+        p1.state.result!.value!,
+        p2.state.result!.value!,
+        p3.state.result!.value!,
+        p4.state.result!.value!,
+        p5.state.result!.value!
+      )
+    }))
+}
+
 public func when<T>(_ promises: [Promise<T>]) -> Promise<[T]> {
   let masterPromise = Promise<[T]>()
   var (total, resolved) = (promises.count, 0)
-  
+
   if promises.isEmpty {
     masterPromise.resolve([])
   } else {
@@ -42,6 +82,6 @@ public func when<T>(_ promises: [Promise<T>]) -> Promise<[T]> {
         })
     }
   }
-  
+
   return masterPromise
 }
